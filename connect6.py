@@ -95,5 +95,5 @@ while not gameEnd:
         dropPiece(board, row, col, player)
     printBoard(board)
     if checkWin(board):
-        print("Wow! Player " + player + " YOU WON!")
+        print("Congrats Player " + player + "! YOU WON!")
         gameEnd = True
