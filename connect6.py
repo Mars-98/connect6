@@ -54,11 +54,18 @@ def checkWin(Board):
                     == Board[r + 5][c] != 0:
                 return True
 
-    # check for diagonal win
+    # check for + slope diagonal win
     for c in range(COLUMN_CNT - 5):  # range is exclusive, so it goes from 0 to (COLUMN_CNT-5)-1 == 3
         for r in range(ROW_CNT - 5):  # range is exclusive, so it goes from 0 to (R0W_CNT-5)-1 == 2
             if Board[r][c] == Board[r + 1][c + 1] == Board[r + 2][c + 2] == Board[r + 3][c + 3] == Board[r + 4][c + 4] \
                     == Board[r + 5][c + 5] != 0:
+                return True
+
+    # check for - slope diagonal win
+    for c in range(COLUMN_CNT - 5):  # range is exclusive, so it goes from 0 to (COLUMN_CNT-5)-8=1 == 3
+        for r in range(5, ROW_CNT):  # starts at 5 and goes until ROW_CNT - 1
+            if Board[r][c] == Board[r - 1][c + 1] == Board[r - 2][c + 2] == Board[r - 3][c + 3] == Board[r - 4][c + 4] \
+                    == Board[r - 5][c + 5] != 0:  # wont need to check != 0 because the element it starts at wont be 0
                 return True
 
     return False
@@ -89,3 +96,4 @@ while not gameEnd:
     printBoard(board)
     if checkWin(board):
         print("Wow! Player " + player + " YOU WON!")
+        gameEnd = True
