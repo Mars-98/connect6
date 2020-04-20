@@ -1,8 +1,12 @@
 import numpy as np
 from soupsieve.util import string
+import pygame
+import sys
 
 ROW_CNT = 8
 COLUMN_CNT = 9
+AQUA = (0, 128, 128)
+YELLOW = (255, 255, 0)
 
 
 def createBoard():
@@ -39,7 +43,7 @@ def changeTurn(Turn):
 
 
 def checkWin(Board):
-    counter = 0
+    # counter = 1
     # check for horizontal win
     for r in range(ROW_CNT - 1):
         for c in range(COLUMN_CNT - 5):  # range is exclusive, so it goes from 0 to (COLUMN_CNT-5)-1 == 3
@@ -79,21 +83,55 @@ def printBoard(Board):  # the axis of the board is row 1 column one, so pieces f
 # name1 = input("Lets get started! What's your name? ")
 # name2 = input("Lets get started! What's your name? ")
 
+def drawBoard(Board):
+    for c in range(COLUMN_CNT):
+        for r in range(ROW_CNT + 1):
+            # size of width and height, as well as the position on the y(r) and x(c) axis = defines a rectangle
+            # we add a square size to r to the empty row can be displayed at the top, since the axis of the board starts
+            # at (0,0) which is top left, so we shifted  down to account for the offset we left
+            pygame.draw.rect(screen, AQUA, (c * SQUARE_SIZE, r * SQUARE_SIZE + SQUARE_SIZE, SQUARE_SIZE, SQUARE_SIZE))
+            # c * SQUARE_SIZE + SQUARE_SIZE/2, r * SQUARE_SIZE + SQUARE_SIZE + SQUARE_SIZE/2, SQUARE_SIZE, SQUARE_SIZE))
+            # is the position for thr center of the circle, by adding the offset SQUARE_SIZE/2
+            pygame.draw.circle(screen, YELLOW, (int(c * SQUARE_SIZE + SQUARE_SIZE/2), int(r * SQUARE_SIZE + SQUARE_SIZE +
+                                                SQUARE_SIZE/2)), radius)
+
+
+pygame.init()
+
+SQUARE_SIZE = 80
+width = COLUMN_CNT * SQUARE_SIZE
+height = (ROW_CNT + 1) * SQUARE_SIZE
+size = (width, height)
+screen = pygame.display.set_mode(size)
+radius = int(SQUARE_SIZE/2 - 4)
+
+drawBoard(board)
+pygame.display.update()
+
 while not gameEnd:
 
-    # player one
-    if turn == 0:
-        player = string(1)  # casted to string bc I can't concatenate string and int inside of user input call
-    # player two
-    else:
-        player = string(2)
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            gameEnd = True
 
-    turn = changeTurn(turn)
-    col = int(input("Player_" + player + ": select which position you want to fill: 0-8:  "))
-    if validLoc(board, col):
-        row = nextOpenRow(board, col)
-        dropPiece(board, row, col, player)
-    printBoard(board)
-    if checkWin(board):
-        print("Congrats Player " + player + "! YOU WON!")
-        gameEnd = True
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            # player one
+            # if turn == 0:
+            #     player = string(1)  # casted to string bc I can't concatenate string and int inside of user input call
+            # # player two
+            # else:
+            #     player = string(2)
+            #
+            # turn = changeTurn(turn)
+            # col = int(input("Player_" + player + ": select which position you want to fill: 0-8:  "))
+            # if validLoc(board, col):
+            #     row = nextOpenRow(board, col)
+            #     dropPiece(board, row, col, player)
+            # printBoard(board)
+            # if checkWin(board):
+            #     print("Congrats Player " + player + "! YOU WON!")
+            #     gameEnd = True
+            pass
+
+pygame.QUIT()
+sys.exit()
