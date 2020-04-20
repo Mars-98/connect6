@@ -2,11 +2,14 @@ import numpy as np
 from soupsieve.util import string
 import pygame
 import sys
+import math
 
 ROW_CNT = 8
 COLUMN_CNT = 9
 AQUA = (0, 128, 128)
 YELLOW = (255, 255, 0)
+ORANGE = (255, 165, 0)
+BLACK = (0, 0, 0)
 
 
 def createBoard():
@@ -90,10 +93,23 @@ def drawBoard(Board):
             # we add a square size to r to the empty row can be displayed at the top, since the axis of the board starts
             # at (0,0) which is top left, so we shifted  down to account for the offset we left
             pygame.draw.rect(screen, AQUA, (c * SQUARE_SIZE, r * SQUARE_SIZE + SQUARE_SIZE, SQUARE_SIZE, SQUARE_SIZE))
-            # c * SQUARE_SIZE + SQUARE_SIZE/2, r * SQUARE_SIZE + SQUARE_SIZE + SQUARE_SIZE/2, SQUARE_SIZE, SQUARE_SIZE))
-            # is the position for thr center of the circle, by adding the offset SQUARE_SIZE/2
-            pygame.draw.circle(screen, YELLOW, (int(c * SQUARE_SIZE + SQUARE_SIZE/2), int(r * SQUARE_SIZE + SQUARE_SIZE +
-                                                SQUARE_SIZE/2)), radius)
+            if Board[r][c] == 0:
+                # c * SQUARE_SIZE + SQUARE_SIZE/2, r * SQUARE_SIZE + SQUARE_SIZE + SQUARE_SIZE/2, SQUARE_SIZE,
+                # SQUARE_SIZE)) is the position for thr center of the circle, by adding the offset SQUARE_SIZE/2
+                pygame.draw.circle(screen, BLACK,
+                                   (int(c * SQUARE_SIZE + SQUARE_SIZE / 2), int(r * SQUARE_SIZE + SQUARE_SIZE +
+                                                                                SQUARE_SIZE / 2)), radius)
+            elif Board[r][c] == 1:
+                pygame.draw.circle(screen, YELLOW,
+                                   (int(c * SQUARE_SIZE + SQUARE_SIZE / 2), int(r * SQUARE_SIZE + SQUARE_SIZE +
+                                                                                SQUARE_SIZE / 2)), radius)
+            else:
+                pygame.draw.circle(screen, ORANGE,
+                                   (int(c * SQUARE_SIZE + SQUARE_SIZE / 2), int(r * SQUARE_SIZE + SQUARE_SIZE +
+                                                                                SQUARE_SIZE / 2)), radius)
+    pygame.display.update()
+
+
 
 
 pygame.init()
@@ -103,7 +119,7 @@ width = COLUMN_CNT * SQUARE_SIZE
 height = (ROW_CNT + 1) * SQUARE_SIZE
 size = (width, height)
 screen = pygame.display.set_mode(size)
-radius = int(SQUARE_SIZE/2 - 4)
+radius = int(SQUARE_SIZE / 2 - 4)
 
 drawBoard(board)
 pygame.display.update()
@@ -115,23 +131,28 @@ while not gameEnd:
             gameEnd = True
 
         if event.type == pygame.MOUSEBUTTONDOWN:
+            print(event.pos)
             # player one
-            # if turn == 0:
-            #     player = string(1)  # casted to string bc I can't concatenate string and int inside of user input call
-            # # player two
-            # else:
-            #     player = string(2)
-            #
-            # turn = changeTurn(turn)
-            # col = int(input("Player_" + player + ": select which position you want to fill: 0-8:  "))
-            # if validLoc(board, col):
-            #     row = nextOpenRow(board, col)
-            #     dropPiece(board, row, col, player)
-            # printBoard(board)
-            # if checkWin(board):
-            #     print("Congrats Player " + player + "! YOU WON!")
-            #     gameEnd = True
-            pass
+            if turn == 0:
+                player = string(1)  # casted to string bc I can't concatenate string and int inside of user input call
+            # player two
+            else:
+                player = string(2)
+
+            turn = changeTurn(turn)
+            posx = event.pos[0]
+            col = int(math.floor(posx / SQUARE_SIZE))
+
+            if validLoc(board, col):
+                row = nextOpenRow(board, col)
+                dropPiece(board, row, col, player)
+
+            if checkWin(board):
+                print("Congrats Player " + player + "! YOU WON!")
+                gameEnd = True
+
+            printBoard(board)
+            drawBoard(board)
 
 pygame.QUIT()
 sys.exit()
