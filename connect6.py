@@ -7,8 +7,8 @@ import math
 ROW_CNT = 8
 COLUMN_CNT = 9
 AQUA = (0, 128, 128)
-YELLOW = (255, 255, 0)
-ORANGE = (255, 165, 0)
+YELLOW = (255, 215, 0)
+RED = (128, 0, 0)
 BLACK = (0, 0, 0)
 
 
@@ -83,38 +83,36 @@ def printBoard(Board):  # the axis of the board is row 1 column one, so pieces f
     print(np.flip(Board, 0))
 
 
-# name1 = input("Lets get started! What's your name? ")
-# name2 = input("Lets get started! What's your name? ")
-
 def drawBoard(Board):
     for c in range(COLUMN_CNT):
-        for r in range(ROW_CNT + 1):
+        for r in range(ROW_CNT):
             # size of width and height, as well as the position on the y(r) and x(c) axis = defines a rectangle
             # we add a square size to r to the empty row can be displayed at the top, since the axis of the board starts
             # at (0,0) which is top left, so we shifted  down to account for the offset we left
             pygame.draw.rect(screen, AQUA, (c * SQUARE_SIZE, r * SQUARE_SIZE + SQUARE_SIZE, SQUARE_SIZE, SQUARE_SIZE))
-            if Board[r][c] == 0:
-                # c * SQUARE_SIZE + SQUARE_SIZE/2, r * SQUARE_SIZE + SQUARE_SIZE + SQUARE_SIZE/2, SQUARE_SIZE,
-                # SQUARE_SIZE)) is the position for thr center of the circle, by adding the offset SQUARE_SIZE/2
-                pygame.draw.circle(screen, BLACK,
-                                   (int(c * SQUARE_SIZE + SQUARE_SIZE / 2), int(r * SQUARE_SIZE + SQUARE_SIZE +
-                                                                                SQUARE_SIZE / 2)), radius)
-            elif Board[r][c] == 1:
-                pygame.draw.circle(screen, YELLOW,
-                                   (int(c * SQUARE_SIZE + SQUARE_SIZE / 2), int(r * SQUARE_SIZE + SQUARE_SIZE +
-                                                                                SQUARE_SIZE / 2)), radius)
-            else:
-                pygame.draw.circle(screen, ORANGE,
-                                   (int(c * SQUARE_SIZE + SQUARE_SIZE / 2), int(r * SQUARE_SIZE + SQUARE_SIZE +
-                                                                                SQUARE_SIZE / 2)), radius)
+            # c * SQUARE_SIZE + SQUARE_SIZE/2, r * SQUARE_SIZE + SQUARE_SIZE + SQUARE_SIZE/2, SQUARE_SIZE,
+            # SQUARE_SIZE)) is the position for the center of the circle, by adding the offset SQUARE_SIZE/2
+            pygame.draw.circle(screen, BLACK,
+                               (int(c * SQUARE_SIZE + SQUARE_SIZE / 2), int(r * SQUARE_SIZE + SQUARE_SIZE +
+                                                                            SQUARE_SIZE / 2)), radius)
+
+        for c2 in range(COLUMN_CNT):
+            for r2 in range(ROW_CNT):
+                if Board[r2][c2] == 1:
+                    pygame.draw.circle(screen, YELLOW,
+                                       (int(c2 * SQUARE_SIZE + SQUARE_SIZE / 2),
+                                        height - int(r2 * SQUARE_SIZE + SQUARE_SIZE + SQUARE_SIZE / 2)), radius)
+                elif Board[r2][c2] == 2:
+                    pygame.draw.circle(screen, RED,
+                                       (int(c2 * SQUARE_SIZE + SQUARE_SIZE / 2),
+                                        height - int(r2 * SQUARE_SIZE + SQUARE_SIZE + SQUARE_SIZE / 2)), radius)
+
     pygame.display.update()
-
-
 
 
 pygame.init()
 
-SQUARE_SIZE = 80
+SQUARE_SIZE = 100
 width = COLUMN_CNT * SQUARE_SIZE
 height = (ROW_CNT + 1) * SQUARE_SIZE
 size = (width, height)
@@ -127,8 +125,19 @@ pygame.display.update()
 while not gameEnd:
 
     for event in pygame.event.get():
+
         if event.type == pygame.QUIT:
             gameEnd = True
+
+        if event.type == pygame.MOUSEMOTION:
+            pygame.draw.rect(screen, BLACK, (0, 0, width, SQUARE_SIZE))
+            posx = event.pos[0]
+            if turn == 0:  # something is wrong up here
+                pygame.draw.circle(screen, YELLOW, (posx, int(SQUARE_SIZE / 2)), radius)
+            elif turn == 1:
+                pygame.draw.circle(screen, RED, int(posx, int(SQUARE_SIZE / 2)), radius)
+
+            pygame.display.update()
 
         if event.type == pygame.MOUSEBUTTONDOWN:
             print(event.pos)
